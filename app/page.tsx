@@ -10,6 +10,7 @@ import { supabase } from "@/lib/supabase";
 import { NovaCobrancaModal } from "@/components/NovaCobrancaModal";
 import { BotaoCobrarPix } from "@/components/BotaoCobrarPix";
 import { ConfiguracoesModal } from "@/components/ConfiguracoesModal";
+import { BotoesAcao } from "@/components/BotoesAcao";
 
 // Força o Next.js a sempre buscar dados novos ao recarregar a página
 export const revalidate = 0;
@@ -104,6 +105,28 @@ export default async function Home() {
 
                       {/* O botão do Pix agora recebe a configuração também */}
                       <BotaoCobrarPix cobranca={cobranca} configuracao={configuracao} />
+                      <div className="text-right flex flex-col items-end gap-3">
+                      <div className="flex items-center gap-4">
+                        <p className="font-bold text-zinc-900">
+                          {formatarMoeda(cobranca.valor)}
+                        </p>
+                        <span
+                          className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                            cobranca.status === "pago"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-yellow-100 text-yellow-800"
+                          }`}
+                        >
+                          {cobranca.status.toUpperCase()}
+                        </span>
+                      </div>
+
+                      {/* Agrupamos os botões de ação com o botão de Ver Pix */}
+                      <div className="flex items-center gap-2">
+                        <BotoesAcao cobrancaId={cobranca.id} statusAtual={cobranca.status} />
+                        <BotaoCobrarPix cobranca={cobranca} configuracao={configuracao} />
+                      </div>
+                    </div>
                     </div>
                   </div>
                 ))
