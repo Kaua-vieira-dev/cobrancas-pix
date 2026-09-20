@@ -1,16 +1,16 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/src/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { supabase } from "@/lib/supabase";
-import { NovaCobrancaModal } from "@/components/NovaCobrancaModal";
-import { BotaoCobrarPix } from "@/components/BotaoCobrarPix";
-import { ConfiguracoesModal } from "@/components/ConfiguracoesModal";
-import { BotoesAcao } from "@/components/BotoesAcao";
+} from "@/src/components/ui/card";
+import { supabase } from "@/src/lib/supabase";
+import { NovaCobrancaModal } from "@/src/components/NovaCobrancaModal";
+import { BotaoCobrarPix } from "@/src/components/BotaoCobrarPix";
+import { ConfiguracoesModal } from "@/src/components/ConfiguracoesModal";
+import { BotoesAcao } from "@/src/components/BotoesAcao";
 
 // Força o Next.js a sempre buscar dados novos ao recarregar a página
 export const revalidate = 0;
