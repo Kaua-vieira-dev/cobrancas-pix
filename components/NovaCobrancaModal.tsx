@@ -1,4 +1,4 @@
-"use client"; // Indica que esse componente roda no navegador (Client-side)
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { supabase } from "@/lib/supabase";
 
-export function NovaCobrancaModal() {
+export function NovaCobrancaModal({ userId }: { userId: string }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -24,30 +24,29 @@ export function NovaCobrancaModal() {
     event.preventDefault();
     setLoading(true);
 
-    // Pega os dados que o usuário digitou no formulário
     const formData = new FormData(event.currentTarget);
     const cliente_nome = formData.get("nome") as string;
     const valor = parseFloat(formData.get("valor") as string);
     const vencimento = formData.get("vencimento") as string;
 
-    // Envia para o Supabase
+    // Inserimos a cobrança JUNTAMENTE com o user_id de quem a criou
     const { error } = await supabase
       .from("cobrancas")
-      .insert([{ cliente_nome, valor, vencimento, status: "aguardando" }]);
+      .insert([{ user_id: userId, cliente_nome, valor, vencimento, status: "aguardando" }]);
 
     setLoading(false);
 
     if (!error) {
-      setOpen(false); // Fecha a janelinha
-      router.refresh(); // Manda a tela inicial buscar os dados atualizados
+      setOpen(false);
+      router.refresh();
     } else {
-      alert("Erro ao criar a cobrança. Tente novamente.");
+      alert("Erro ao criar a cobrança: " + error.message);
     }
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="inline-flex h-9 items-center justify-center rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-50 shadow hover:bg-zinc-900/90">
+      <DialogTrigger className="inline-flex h-9 items-center justify-center rounded-md bg-zinc-800 px-4 py-2 text-sm font-medium text-white shadow hover:bg-zinc-700">
         + Nova Cobrança Pix
       </DialogTrigger>
       <DialogContent>
@@ -82,7 +81,7 @@ export function NovaCobrancaModal() {
             <Label htmlFor="vencimento">Data de Vencimento</Label>
             <Input id="vencimento" name="vencimento" type="date" required />
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="w-full text-black bg-white hover:bg-zinc-200" disabled={loading}>
             {loading ? "Salvando..." : "Criar Cobrança"}
           </Button>
         </form>

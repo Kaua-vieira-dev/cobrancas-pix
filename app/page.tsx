@@ -1,4 +1,5 @@
-import { supabase } from "@/lib/supabase";
+import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
 import { NovaCobrancaModal } from "@/components/NovaCobrancaModal";
 import { BotaoCobrarPix } from "@/components/BotaoCobrarPix";
 import { ConfiguracoesModal } from "@/components/ConfiguracoesModal";
@@ -9,17 +10,45 @@ import { BotaoLogout } from "@/components/BotaoLogout";
 export const revalidate = 0;
 
 export default async function Page() {
-  // Busca os dados no Supabase
-  const { data: cobrancas } = await supabase
+  // 1. Criar o cliente Supabase preparado para ler cookies no Servidor (SSR)
+  const cookieStore = await cookies();
+  const supabaseServer = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+      },
+    }
+  );
+
+  // 2. Agora sim, o servidor consegue ler a sua sessão perfeitamente!
+  const { data: { user } } = await supabaseServer.auth.getUser();
+
+  if (!user) {
+    // Em vez da tela preta (null), mostramos isto enquanto o redirecionamento atua
+    return (
+      <div className="flex h-screen bg-[#0a0a0a] items-center justify-center text-zinc-400">
+        <p>A verificar sessão...</p>
+      </div>
+    );
+  }
+
+  // 3. Busca APENAS as cobranças deste utilizador logado
+  const { data: cobrancas } = await supabaseServer
     .from("cobrancas")
     .select("*")
+    .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
-  const { data: configuracao } = await supabase
+  // 4. Busca a configuração APENAS deste utilizador logado
+  const { data: configuracao } = await supabaseServer
     .from("configuracoes")
     .select("*")
-    .eq("id", 1)
-    .single();
+    .eq("user_id", user.id)
+    .maybeSingle();
 
   // Cálculos para as Métricas
   const totalRecebido =
@@ -47,7 +76,6 @@ export default async function Page() {
     });
   };
 
-  // Mês atual para o cabeçalho
   const mesAtual = new Date().toLocaleDateString("pt-BR", {
     month: "long",
     year: "numeric",
@@ -81,7 +109,7 @@ export default async function Page() {
           </div>
         </nav>
 
-        {/* RODAPÉ DA BARRA LATERAL (Botão Sair) */}
+        {/* RODAPÉ DA BARRA LATERAL */}
         <div className="p-4 border-t border-zinc-800/60">
           <BotaoLogout />
         </div>
@@ -100,16 +128,16 @@ export default async function Page() {
           
           <div className="flex flex-row items-center w-full md:w-auto gap-3">
             <div className="flex-1 md:flex-none flex [&>*]:w-full">
-              <ConfiguracoesModal configAtual={configuracao} />
+              <ConfiguracoesModal configAtual={configuracao} userId={user.id} />
             </div>
             <div className="flex-1 md:flex-none flex [&>*]:w-full">
-              <NovaCobrancaModal />
+              <NovaCobrancaModal userId={user.id} />
             </div>
           </div>
         </header>
 
         <main className="flex-1 overflow-auto p-4 md:p-8 space-y-6">
-          {/* BLOCO DE MÉTRICAS UNIFICADO */}
+          {/* BLOCO DE MÉTRICAS */}
           <div className="grid grid-cols-1 md:grid-cols-4 rounded-xl border border-zinc-800/60 bg-[#121214] divide-y md:divide-y-0 md:divide-x divide-zinc-800/60">
             {/* Card 1 */}
             <div className="p-5 flex flex-col justify-between h-28">
@@ -169,10 +197,9 @@ export default async function Page() {
             </div>
           </div>
 
-          {/* ÁREA DOS GRÁFICOS */}
           <GraficosDashboard cobrancas={cobrancas || []} />
 
-          {/* LISTA DE TRANSAÇÕES RECENTES */}
+          {/* LISTA DE TRANSAÇÕES */}
           <div>
             <div className="flex items-center justify-between mb-4">
               <div>
