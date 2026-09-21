@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/lib/supabase";
+import { Button } from "@/src/components/ui/button";
+import { supabase } from "@/src/lib/supabase";
 
 export function BotoesAcao({
   cobrancaId,

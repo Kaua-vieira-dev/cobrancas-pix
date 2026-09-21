@@ -1,9 +1,16 @@
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { supabase } from "@/lib/supabase";
 import { NovaCobrancaModal } from "@/components/NovaCobrancaModal";
 import { BotaoCobrarPix } from "@/components/BotaoCobrarPix";
 import { ConfiguracoesModal } from "@/components/ConfiguracoesModal";
 import { BotoesAcao } from "@/components/BotoesAcao";
-import { GraficosDashboard } from "@/components/GraficosDashboard";
 
 export const revalidate = 0;
 
