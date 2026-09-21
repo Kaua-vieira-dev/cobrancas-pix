@@ -47,7 +47,7 @@ export default async function Page() {
     });
   };
 
-  // Mês atual para o cabeçalho (ex: Setembro de 2026)
+  // Mês atual para o cabeçalho
   const mesAtual = new Date().toLocaleDateString("pt-BR", {
     month: "long",
     year: "numeric",
@@ -89,21 +89,26 @@ export default async function Page() {
 
       {/* CONTEÚDO PRINCIPAL */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* CABEÇALHO */}
-        <header className="flex h-20 items-center justify-between border-b border-zinc-800/60 px-8">
+        {/* CABEÇALHO RESPONSIVO */}
+        <header className="flex flex-col md:flex-row md:h-20 items-start md:items-center justify-between border-b border-zinc-800/60 px-4 md:px-8 py-6 md:py-0 gap-4 md:gap-0">
           <div>
             <h1 className="text-xl font-semibold">Visão geral</h1>
             <p className="text-sm text-zinc-400 mt-0.5">
               {mesCapitalizado} · Conta principal
             </p>
           </div>
-          <div className="flex items-center gap-4">
-            <ConfiguracoesModal configAtual={configuracao} />
-            <NovaCobrancaModal />
+          
+          <div className="flex flex-row items-center w-full md:w-auto gap-3">
+            <div className="flex-1 md:flex-none flex [&>*]:w-full">
+              <ConfiguracoesModal configAtual={configuracao} />
+            </div>
+            <div className="flex-1 md:flex-none flex [&>*]:w-full">
+              <NovaCobrancaModal />
+            </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto p-8 space-y-6">
+        <main className="flex-1 overflow-auto p-4 md:p-8 space-y-6">
           {/* BLOCO DE MÉTRICAS UNIFICADO */}
           <div className="grid grid-cols-1 md:grid-cols-4 rounded-xl border border-zinc-800/60 bg-[#121214] divide-y md:divide-y-0 md:divide-x divide-zinc-800/60">
             {/* Card 1 */}
