@@ -25,6 +25,14 @@ export default function SignupPage() {
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
+
+    // Validação para garantir que as senhas são iguais
+    if (password !== confirmPassword) {
+      setErro("As senhas não coincidem. Tente novamente.");
+      setCarregando(false);
+      return;
+    }
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -49,7 +57,7 @@ export default function SignupPage() {
         <div className="flex flex-col items-center mb-8">
           <div className="w-10 h-10 bg-white text-black rounded-lg flex items-center justify-center text-lg font-bold mb-4">F</div>
           <h1 className="text-2xl font-semibold text-white">Criar Conta</h1>
-          <p className="text-sm text-zinc-400 mt-2">Comece a gerir as suas cobranças hoje</p>
+          <p className="text-sm text-zinc-400 mt-2">Registe-se para gerir as suas cobranças</p>
         </div>
 
         <form onSubmit={onSignup} className="space-y-4">
@@ -65,7 +73,7 @@ export default function SignupPage() {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1">Palavra-passe</label>
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Senha</label>
             <input 
               type="password" 
               name="password" 
@@ -73,6 +81,18 @@ export default function SignupPage() {
               minLength={6}
               className="w-full bg-[#0a0a0a] border border-zinc-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500 transition-colors"
               placeholder="Mínimo 6 caracteres"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Confirmar Senha</label>
+            <input 
+              type="password" 
+              name="confirmPassword" 
+              required
+              minLength={6}
+              className="w-full bg-[#0a0a0a] border border-zinc-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+              placeholder="Repita a senha"
             />
           </div>
 
