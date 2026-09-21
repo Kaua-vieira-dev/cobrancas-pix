@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@/src/components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -8,9 +8,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/src/components/ui/dialog"
+} from "@/components/ui/dialog"
 import { QRCodeCanvas } from "qrcode.react"
-import { Input } from "@/src/components/ui/input"
+import { Input } from "@/components/ui/input"
 import { QrCodePix } from "qrcode-pix"
 
 interface BotaoCobrarPixProps {
